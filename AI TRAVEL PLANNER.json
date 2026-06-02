@@ -1,0 +1,616 @@
+{
+  "name": "AI TRAVEL PLANNER",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "AI TRAVEL PLANNER",
+        "formDescription": "Budget-Firedly Destination",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Starting Location"
+            },
+            {
+              "fieldLabel": "Destination"
+            },
+            {
+              "fieldLabel": "Number of Days",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Budget",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Travel Date",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "Interests",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Adventure"
+                  },
+                  {
+                    "option": "Nature"
+                  },
+                  {
+                    "option": "Shopping"
+                  },
+                  {
+                    "option": "Food"
+                  },
+                  {
+                    "option": "Historical"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Preffered Language",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "English"
+                  },
+                  {
+                    "option": "Telugu"
+                  },
+                  {
+                    "option": "Hindi"
+                  },
+                  {
+                    "option": "Tamil"
+                  },
+                  {
+                    "option": "Kannada"
+                  },
+                  {
+                    "option": "Marati"
+                  },
+                  {
+                    "option": "panjabi"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -816,
+        192
+      ],
+      "id": "b266356a-25b3-4473-94a4-daa3b3299132",
+      "name": "On form submission",
+      "webhookId": "6fc027b0-22f7-4e07-98ff-dd8cd1a3f879"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f13829a3-c6db-4c48-9c91-d7b940dd8eef",
+              "leftValue": "={{ $json.Budget }}",
+              "rightValue": "={{ 10000 }}",
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -400,
+        192
+      ],
+      "id": "7cc85527-2eaa-458d-b842-69b67982dbeb",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cf2e0ccd-3265-41a6-890d-d9c482edc965",
+              "name": "Destination",
+              "value": "={{ $json.Destination }}",
+              "type": "string"
+            },
+            {
+              "id": "831d509b-f394-492c-afe7-f0f95a8fdcc3",
+              "name": "=Number of Days",
+              "value": "={{ $json['Number of Days'] }}",
+              "type": "number"
+            },
+            {
+              "id": "afd44c9b-dadb-45ae-bf7a-4122899d09ba",
+              "name": "Budget",
+              "value": "={{ $json.Budget }}",
+              "type": "number"
+            },
+            {
+              "id": "2f385693-1637-4976-9d56-7a1a110cc796",
+              "name": "Travel Date",
+              "value": "={{ $json['Travel Date'] }}",
+              "type": "string"
+            },
+            {
+              "id": "84660fb2-76f6-4863-a1d6-bfaf28c5b359",
+              "name": "Interests",
+              "value": "={{ $json.Interests }}",
+              "type": "string"
+            },
+            {
+              "id": "5e34eb7a-af8d-4ecc-b41c-247ff604f359",
+              "name": "Email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "38373daf-4b74-49fa-8f35-058dd7b18c57",
+              "name": "submittedAt",
+              "value": "={{ $json.submittedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "a7559da8-137a-42d6-825d-c6fd370ed00d",
+              "name": "Phone Number",
+              "value": "={{ $json['Phone Number'] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -608,
+        192
+      ],
+      "id": "65d61668-0cdc-4332-ad18-98046e71f2a3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert travel planner.\n\nCreate a budget-friendly travel plan.\n\nDestination: {{$json.Destination}}\n\nDays: {{$json[\"Number of Days\"]}}\n\nBudget: {{$json.Budget}}\n\nTravel Date: {{$json[\"Travel Date\"]}}\n\nInterests: {{$json.Interests}}\n\nGenerate:\n\n1. Top tourist attractions\n2. Affordable hotels\n3. Local transportation options\n4. Day-wise itinerary\n5. Budget breakdown\n6. Travel tips\n\nKeep everything within the budget.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "e4d26a58-f235-48b3-b8ee-bd292e57f7f3",
+      "name": "low-budget"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert travel planner.\n\nCreate a budget-friendly travel plan.\n\nDestination: {{$json.Destination}}\n\nDays: {{$json[\"Number of Days\"]}}\n\nBudget: {{$json.Budget}}\n\nTravel Date: {{$json[\"Travel Date\"]}}\n\nInterests: {{$json.Interests}}\n\nGenerate:\n\n1. Top tourist attractions\n2. Affordable hotels\n3. Local transportation options\n4. Day-wise itinerary\n5. Budget breakdown\n6. Travel tips\n\nKeep everything within the budget.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -208,
+        240
+      ],
+      "id": "09d019c3-a7e8-49da-a979-4ba25a4c9ddd",
+      "name": "high-budget"
+    },
+    {
+      "parameters": {
+        "method": "=GET",
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google_hotels"
+            },
+            {
+              "name": "q",
+              "value": "={{$node[\"Edit Fields\"].json[\"Destination\"]}}"
+            },
+            {
+              "name": "api_key",
+              "value": "b953a96f82864d579d293fd117d2c5b1a9b294ad1f69ab72657a1c9e94291fd7"
+            },
+            {
+              "name": "check_in_date",
+              "value": "2026-06-01"
+            },
+            {
+              "name": "check_out_date",
+              "value": "2026-06-06"
+            },
+            {
+              "name": "adult",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        160,
+        -16
+      ],
+      "id": "6f36a82b-5cea-4c40-8308-63b98c01fc64",
+      "name": "Search Hotels"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert AI Travel Planner.\n\nGenerate a complete travel plan based on the user details below.\n{{ $('On form submission').item.json['Starting Location'] }}\nDestination: {{$node[\"Edit Fields\"].json[\"Destination\"]}}\n\nNumber of Days: {{$node[\"Edit Fields\"].json[\"Number of Days\"]}}\n\nBudget: {{$node[\"Edit Fields\"].json[\"Budget\"]}}\n\nTravel Date: {{$node[\"Edit Fields\"].json[\"Travel Date\"]}}\n\nInterests: {{$node[\"Edit Fields\"].json[\"Interests\"]}}\n{{ $('On form submission').item.json['Preffered Language'] }}\nHotel Search Results:\n{{$node[\"Search Hotels\"].json}}\n\nTransportation Search Results:\n{{$node[\"Search Transportations\"].json}}\ngive the output only in steps(like1,2,3,4)\ndont give in paragraph manner\nalso dont give more matter\n\nRequirements:\n\n1. Create a personalized travel itinerary for the destination.\n2. Suggest top tourist attractions relevant to the user's interests.\n3. Recommend 3 hotels (Budget, Mid-range, Luxury).\n4. Suggest transportation options including flights, trains, buses, and local transport.\n5. Create a detailed day-wise itinerary.\n6. Provide an estimated budget breakdown.\n7. Include food recommendations and travel tips.\n8. Do not ask for more information.\n9. Do not use placeholders.\n10. Generate the final travel plan directly.\n\nFormat the output as:\n\nTRAVEL PLAN FOR [Destination]\n\nOverview\n\nTop Attractions\n\nRecommended Hotels\n\nTransportation Options\n\nDay 1\n\nDay 2\n\nDay 3\n\n(and so on)\n\nBudget Breakdown\ngenerate the travel plan in simple way that could be understood by everyone in simple way\ngive the output in simple so that it could be understood by everyone \nalso mention how much money is used and for what purpose\nalso gnerate the remaining budget\n\nTravel Tips\nAt the beginning of the travel plan, provide a Google Maps link for the destination.\n\nFormat:\nStarting Location: [Starting Location]\nDestination: [Destination Name]\n\nGoogle Maps:\nhttps://www.google.com/maps/dir/STARTING_LOCATION/DESTINATION\n Approximate Distance\n4. Estimated Travel Time\n5. Recommended Route\nGenerate the complete travel plan in  language.{{ $('On form submission').item.json['Preffered Language'] }}\n\nTranslate all headings, itinerary, hotel recommendations, transportation details, budget breakdown, food recommendations, travel tips, and conclusion into the selected language.\n\nDo not use English unless the selected language is English.\nInclude a section called \"Places to Visit on the Route\".\n\nCreate a section called:\n\nPLACES TO VISIT ON THE ROUTE\nBased on the Starting Location and Destination, identify famous tourist attractions, temples, monuments, nature spots, viewpoints, or historical places that can be visited while travelling between the two locations.\nInclude a section called \"Places to Visit on the Route\".\n\nBased on the Starting Location and Destination, identify famous tourist attractions, temples, monuments, nature spots, viewpoints, or historical places that can be visited while travelling between the two locations.\n\nFor each place provide:\n\n1. Place Name\n2. Short Description\n3. Approximate Distance from Route\n4. Google Maps Link\n\nLimit to 5-10 important places.\nConclusion\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        784,
+        -16
+      ],
+      "id": "edaf794d-135c-445d-8e3d-f1ee95bf3d0b",
+      "name": "Final Travel Plan"
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google"
+            },
+            {
+              "name": "q",
+              "value": "=Transportation options in {{$node[\"Edit Fields\"].json[\"Destination\"]}}"
+            },
+            {
+              "name": "api_key",
+              "value": "b953a96f82864d579d293fd117d2c5b1a9b294ad1f69ab72657a1c9e94291fd7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        368,
+        -16
+      ],
+      "id": "8c3fa3fb-4829-40e9-893e-b1264fa86d98",
+      "name": "Search Transportations"
+    },
+    {
+      "parameters": {
+        "url": "https://api.pexels.com/v1/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "={{$node[\"Edit Fields\"].json[\"Destination\"]}}"
+            },
+            {
+              "name": "per_page",
+              "value": "3"
+            },
+            {
+              "name": "Authorization",
+              "value": "BgaK38sFYrW49s94AEmKBJQVGsHPydvpluy7Hje7xwNxnTxUDYlXX99u"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "BgaK38sFYrW49s94AEmKBJQVGsHPydvpluy7Hje7xwNxnTxUDYlXX99u"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        576,
+        -16
+      ],
+      "id": "110616d4-3c35-47e2-9c33-93abfcbae9c6",
+      "name": "Search Images"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$node[\"Edit Fields\"].json[\"Email\"]}}",
+        "subject": "=AI Travel Plan for {{$node[\"Edit Fields\"].json[\"Destination\"]}}",
+        "message": "=<h1>🌍 AI Travel Plan</h1>\n\n<h2>Destination: {{$node[\"Edit Fields\"].json[\"Destination\"]}}</h2>\n\n<img src=\"{{$node[\"Search Images\"].json[\"photos\"][0][\"src\"][\"large\"]}}\" width=\"600\">\n\n<h2>📅 Travel Plan</h2>\n\n<pre>\n{{$node[\"Final Travel Plan\"].json[\"output\"]}}\n</pre>\n\n<hr>\n\n<p>Generated automatically by AI Travel Planner</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        -16
+      ],
+      "id": "849928a5-34fd-4db8-8076-c66c2ea58e9d",
+      "name": "Send a message",
+      "webhookId": "caba4a45-26ff-42e9-85e9-b5a51937a7c2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fITZlaj34Anp0gqA",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        128
+      ],
+      "id": "8424af51-9c76-4f59-8ac7-d3ca5becdecf",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -352,
+        448
+      ],
+      "id": "b3a21dd6-21ce-4da8-8314-5e438977b8c1",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        192
+      ],
+      "id": "1eb2a633-fdc7-4243-9b04-51bb2a3c3998",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "low-budget",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "high-budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "low-budget": {
+      "main": [
+        [
+          {
+            "node": "Search Hotels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "high-budget": {
+      "main": [
+        [
+          {
+            "node": "Search Hotels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Hotels": {
+      "main": [
+        [
+          {
+            "node": "Search Transportations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Travel Plan": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Transportations": {
+      "main": [
+        [
+          {
+            "node": "Search Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Images": {
+      "main": [
+        [
+          {
+            "node": "Final Travel Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "low-budget",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "high-budget",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Final Travel Plan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0e06cc05-0929-4fd9-8f43-7f0d9d79d14c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "80303f5c167ba5d33e987305d728709ca5c7e4b44e7f0f7d6be73f54b3f548f2"
+  },
+  "id": "BZPbwSUjKH7yzddG",
+  "tags": []
+}
